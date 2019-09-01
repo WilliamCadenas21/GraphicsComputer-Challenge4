@@ -27,11 +27,6 @@ public class KeyListenerExample extends JPanel implements KeyListener {
 
     public static final int FRAME_WIDTH = 600;
     public static final int FRAME_HEIGHT = 600;
-    public static final int RECTANGLE_WIDTH = 100;
-    public static final int RECTANGLE_HEIGHT = 100;
-
-    int posX = 100;
-    int posY = 100;
 
     static Point3[] pointsVec = new Point3[20];
     static Edge[] edgesVec = new Edge[20];
@@ -51,28 +46,28 @@ public class KeyListenerExample extends JPanel implements KeyListener {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.setColor(Color.blue);
-         // size es el tamaÃ±o de la ventana.
+        // size es el tamaÃ±o de la ventana.
         Dimension size = getSize();
         // Insets son los bordes y los tÃ­tulos de la ventana.
         Insets insets = getInsets();
         int w = size.width - insets.left - insets.right;
         int h = size.height - insets.top - insets.bottom;
-        
+
         g.drawLine(0, h / 2, w, h / 2);// eje x
         g.drawLine(w / 2, 0, w / 2, h);// eje y
-        
+
         show(edgesVec);
         for (int i = 0; i < edgesVec.length; i++) {
             System.out.println("dibujando");
             Edge e = edgesVec[i];
             Point3 p1 = e.p1;
             Point3 p2 = e.p2;
-            int xr1 = w / 2 + (int) p1.x;    
-            int xr2 = w / 2 + (int) p2.x;    
+            int xr1 = w / 2 + (int) p1.x;
+            int xr2 = w / 2 + (int) p2.x;
             int yr1 = h / 2 - (int) p1.y;
             int yr2 = h / 2 - (int) p2.y;
-            
-            g.drawLine(xr1,yr1,xr2,yr2);
+
+            g.drawLine(xr1, yr1, xr2, yr2);
         }
     }
 
@@ -83,18 +78,65 @@ public class KeyListenerExample extends JPanel implements KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
         int tecla = e.getKeyCode();
-        
-        if (tecla == KeyEvent.VK_D) {
-            Matrix3x3 mt = {{},{},{}};
-            
-            posX += 10;
-        } else if (tecla == KeyEvent.VK_A) {
-            posX -= 10;
-        } else if (tecla == KeyEvent.VK_W) {
-            posY -= 10;
-        } else if (tecla == KeyEvent.VK_S) {
-            posY += 10;
+
+        switch (tecla) {
+
+            //Moving
+            case KeyEvent.VK_D: {
+                double[][] aux = {{1, 0, 10}, {0, 1, 0}, {0, 0, 1}};
+                Matrix3x3 mt = new Matrix3x3(aux);
+                move(mt);
+                break;
+            }
+            case KeyEvent.VK_A: {
+                double[][] aux = {{1, 0, -10}, {0, 1, 0}, {0, 0, 1}};
+                Matrix3x3 mt = new Matrix3x3(aux);
+                move(mt);
+                break;
+            }
+            case KeyEvent.VK_W: {
+                double[][] aux = {{1, 0, 0}, {0, 1, 10}, {0, 0, 1}};
+                Matrix3x3 mt = new Matrix3x3(aux);
+                move(mt);
+                break;
+            }
+            case KeyEvent.VK_S: {
+                double[][] aux = {{1, 0, 0}, {0, 1, -10}, {0, 0, 1}};
+                Matrix3x3 mt = new Matrix3x3(aux);
+                move(mt);
+                break;
+            }
+            // Resizing
+            case KeyEvent.VK_Q: {
+                double[][] aux = {{0.9, 0, 0}, {0, 0.9, 0}, {0, 0, 1}};
+                Matrix3x3 mt = new Matrix3x3(aux);
+                move(mt);
+                break;
+            }
+            case KeyEvent.VK_E: {
+                double[][] aux = {{1.1, 0, 0}, {0, 1.1, 0}, {0, 0, 1}};
+                Matrix3x3 mt = new Matrix3x3(aux);
+                move(mt);
+                break;
+            }
+            // Resizing
+            case KeyEvent.VK_X: {
+                double[][] aux = {{0.9, 0, 0}, {0, 0.9, 0}, {0, 0, 1}};
+                Matrix3x3 mt = new Matrix3x3(aux);
+                move(mt);
+                break;
+            }
+            case KeyEvent.VK_C: {
+                double[][] aux = {{1.1, 0, 0}, {0, 1.1, 0}, {0, 0, 1}};
+                Matrix3x3 mt = new Matrix3x3(aux);
+                move(mt);
+                break;
+            }
+
+            default:
+                break;
         }
+
         if (DEBUG) {
             System.out.println("Aplicando una transformación");
         }
@@ -102,40 +144,17 @@ public class KeyListenerExample extends JPanel implements KeyListener {
         repaint();
     }
 
-    @Override
-    public void keyTyped(KeyEvent e) {
-    }
+    public static void move(Matrix3x3 mt) {
+        for (int i = 0; i < edgesVec.length; i++) {
+            Point3 aux1 = edgesVec[i].p1;
+            Point3 aux2 = edgesVec[i].p2;
 
-    /**
-     * In the main method, the frame and panels are created. And the
-     * KeyListeners are added.
-     *
-     * @param args
-     * @throws java.io.IOException
-     */
-    public static void main(String[] args) throws IOException {
-        if (DEBUG) {
-            System.out.println("Comenzando el programa...");
+            aux1 = Matrix3x3.times(mt, aux1);
+            aux2 = Matrix3x3.times(mt, aux2);
+
+            edgesVec[i].p1 = aux1;
+            edgesVec[i].p2 = aux2;
         }
-        if (DEBUG) {
-            System.out.println("Leyendo el archivo");
-        }
-        readFile();
-
-        KeyListenerExample kle = new KeyListenerExample();
-
-        // Create a new Frame
-        JFrame frame = new JFrame("Ejemplo KeyListener");
-        // Upon closing the frame, the application ends
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        // Add a panel called DibujarCasita3D
-        frame.add(kle);
-        // Asignarle tamaño
-        frame.setSize(KeyListenerExample.FRAME_WIDTH, KeyListenerExample.FRAME_HEIGHT);
-        // Put the frame in the middle of the window
-        frame.setLocationRelativeTo(null);
-        // Show the frame
-        frame.setVisible(true);
     }
 
     public static void readFile() throws IOException {
@@ -188,4 +207,39 @@ public class KeyListenerExample extends JPanel implements KeyListener {
         }
     }
 
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    /**
+     * In the main method, the frame and panels are created. And the
+     * KeyListeners are added.
+     *
+     * @param args
+     * @throws java.io.IOException
+     */
+    public static void main(String[] args) throws IOException {
+        if (DEBUG) {
+            System.out.println("Comenzando el programa...");
+        }
+        if (DEBUG) {
+            System.out.println("Leyendo el archivo");
+        }
+        readFile();
+
+        KeyListenerExample kle = new KeyListenerExample();
+
+        // Create a new Frame
+        JFrame frame = new JFrame("Ejemplo KeyListener");
+        // Upon closing the frame, the application ends
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // Add a panel called DibujarCasita3D
+        frame.add(kle);
+        // Asignarle tamaño
+        frame.setSize(KeyListenerExample.FRAME_WIDTH, KeyListenerExample.FRAME_HEIGHT);
+        // Put the frame in the middle of the window
+        frame.setLocationRelativeTo(null);
+        // Show the frame
+        frame.setVisible(true);
+    }
 }
