@@ -57,16 +57,15 @@ public class KeyListenerExample extends JPanel implements KeyListener {
         g.drawLine(w / 2, 0, w / 2, h);// eje y
 
         show(edgesVec);
-        for (int i = 0; i < edgesVec.length; i++) {
+        for (Edge edgesVec1 : edgesVec) {
             System.out.println("dibujando");
-            Edge e = edgesVec[i];
+            Edge e = edgesVec1;
             Point3 p1 = e.p1;
             Point3 p2 = e.p2;
             int xr1 = w / 2 + (int) p1.x;
             int xr2 = w / 2 + (int) p2.x;
             int yr1 = h / 2 - (int) p1.y;
             int yr2 = h / 2 - (int) p2.y;
-
             g.drawLine(xr1, yr1, xr2, yr2);
         }
     }
@@ -85,51 +84,49 @@ public class KeyListenerExample extends JPanel implements KeyListener {
             case KeyEvent.VK_D: {
                 double[][] aux = {{1, 0, 10}, {0, 1, 0}, {0, 0, 1}};
                 Matrix3x3 mt = new Matrix3x3(aux);
-                move(mt);
+                transform(mt);
                 break;
             }
             case KeyEvent.VK_A: {
                 double[][] aux = {{1, 0, -10}, {0, 1, 0}, {0, 0, 1}};
                 Matrix3x3 mt = new Matrix3x3(aux);
-                move(mt);
+                transform(mt);
                 break;
             }
             case KeyEvent.VK_W: {
                 double[][] aux = {{1, 0, 0}, {0, 1, 10}, {0, 0, 1}};
                 Matrix3x3 mt = new Matrix3x3(aux);
-                move(mt);
+                transform(mt);
                 break;
             }
             case KeyEvent.VK_S: {
                 double[][] aux = {{1, 0, 0}, {0, 1, -10}, {0, 0, 1}};
                 Matrix3x3 mt = new Matrix3x3(aux);
-                move(mt);
+                transform(mt);
                 break;
             }
             // Resizing
             case KeyEvent.VK_Q: {
                 double[][] aux = {{0.9, 0, 0}, {0, 0.9, 0}, {0, 0, 1}};
                 Matrix3x3 mt = new Matrix3x3(aux);
-                move(mt);
+                transform(mt);
                 break;
             }
             case KeyEvent.VK_E: {
                 double[][] aux = {{1.1, 0, 0}, {0, 1.1, 0}, {0, 0, 1}};
                 Matrix3x3 mt = new Matrix3x3(aux);
-                move(mt);
+                transform(mt);
                 break;
             }
             // Resizing
             case KeyEvent.VK_X: {
-                double[][] aux = {{0.9, 0, 0}, {0, 0.9, 0}, {0, 0, 1}};
-                Matrix3x3 mt = new Matrix3x3(aux);
-                move(mt);
+                Matrix3x3 mt = matrizRot(45);
+                transform(mt);
                 break;
             }
             case KeyEvent.VK_C: {
-                double[][] aux = {{1.1, 0, 0}, {0, 1.1, 0}, {0, 0, 1}};
-                Matrix3x3 mt = new Matrix3x3(aux);
-                move(mt);
+                Matrix3x3 mt = matrizRot(-45);
+                transform(mt);
                 break;
             }
 
@@ -143,17 +140,29 @@ public class KeyListenerExample extends JPanel implements KeyListener {
 
         repaint();
     }
+    
+    public static Matrix3x3 matrizRot(double i) {
+        double[][] aux = new double[3][3];
+        aux[0][0] = Math.cos(i);
+        aux[0][1] = -1*Math.sin(i);
+        aux[1][0] = Math.sin(i);
+        aux[1][1] = Math.cos(i);
+        aux[2][2] = 2;
+        return new Matrix3x3(aux);
+    }
 
-    public static void move(Matrix3x3 mt) {
-        for (int i = 0; i < edgesVec.length; i++) {
-            Point3 aux1 = edgesVec[i].p1;
-            Point3 aux2 = edgesVec[i].p2;
-
+    /**
+     *
+     * @param mt
+     */
+    public static void transform(Matrix3x3 mt) {
+        for (Edge edgesVec1 : edgesVec) {
+            Point3 aux1 = edgesVec1.p1;
+            Point3 aux2 = edgesVec1.p2;
             aux1 = Matrix3x3.times(mt, aux1);
             aux2 = Matrix3x3.times(mt, aux2);
-
-            edgesVec[i].p1 = aux1;
-            edgesVec[i].p2 = aux2;
+            edgesVec1.p1 = aux1;
+            edgesVec1.p2 = aux2;
         }
     }
 
@@ -161,7 +170,7 @@ public class KeyListenerExample extends JPanel implements KeyListener {
         // We need to provide file path as the parameter: 
         // double backquote is to avoid compiler interpret words 
         // like \test as \t (ie. as a escape sequence) 
-        File file = new File("C:\\Users\\will\\Documents\\casita2d.txt");
+        File file = new File("casita2d.txt");
 
         BufferedReader br = new BufferedReader(new FileReader(file));
 
