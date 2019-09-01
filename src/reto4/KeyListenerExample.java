@@ -17,6 +17,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import matematico.*;
 
 /**
@@ -129,6 +131,14 @@ public class KeyListenerExample extends JPanel implements KeyListener {
                 transform(mt);
                 break;
             }
+            case KeyEvent.VK_R: {
+            try {
+                readFile();
+            } catch (IOException ex) {
+                Logger.getLogger(KeyListenerExample.class.getName()).log(Level.SEVERE, null, ex);
+            }
+                break;
+            }
 
             default:
                 break;
@@ -147,7 +157,7 @@ public class KeyListenerExample extends JPanel implements KeyListener {
         aux[0][1] = -1*Math.sin(i);
         aux[1][0] = Math.sin(i);
         aux[1][1] = Math.cos(i);
-        aux[2][2] = 2;
+        aux[2][2] = 1;
         return new Matrix3x3(aux);
     }
 
@@ -234,6 +244,7 @@ public class KeyListenerExample extends JPanel implements KeyListener {
         if (DEBUG) {
             System.out.println("Leyendo el archivo");
         }
+        
         readFile();
 
         KeyListenerExample kle = new KeyListenerExample();
