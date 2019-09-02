@@ -47,17 +47,18 @@ public class KeyListenerExample extends JPanel implements KeyListener {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.setColor(Color.blue);
         // size es el tamaÃ±o de la ventana.
         Dimension size = getSize();
         // Insets son los bordes y los tÃ­tulos de la ventana.
         Insets insets = getInsets();
         int w = size.width - insets.left - insets.right;
         int h = size.height - insets.top - insets.bottom;
-
+        
+        g.setColor(Color.black);
         g.drawLine(0, h / 2, w, h / 2);// eje x
         g.drawLine(w / 2, 0, w / 2, h);// eje y
-
+        
+        g.setColor(Color.blue);
         show(edgesVec);
         for (Edge edgesVec1 : edgesVec) {
             System.out.println("dibujando");
