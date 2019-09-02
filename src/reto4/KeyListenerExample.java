@@ -181,7 +181,7 @@ public class KeyListenerExample extends JPanel implements KeyListener {
         // We need to provide file path as the parameter: 
         // double backquote is to avoid compiler interpret words 
         // like \test as \t (ie. as a escape sequence) 
-        File file = new File("casita2d.txt");
+        File file = new File("gancho.txt");
 
         BufferedReader br = new BufferedReader(new FileReader(file));
 
